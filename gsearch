@@ -1,0 +1,60 @@
+#!/usr/bin/env ruby
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    gsearch                                            :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mravenel <mravenel@student.42.fr>          +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2015/02/06 13:29:06 by mravenel          #+#    #+#              #
+#    Updated: 2015/02/06 14:49:32 by mravenel         ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+require 'optparse'
+
+Chrome = "\"Google Chrome.app\""
+BaseUrl = "http://www.google.com/search?q="
+Option = "-a"
+Bin = "open"
+
+Options = {}
+
+optparse = OptionParser.new do|opts|
+  opts.banner = "Usage: gsearch [options] keyword1 keyword2 keyword3..."
+  Options[:verbose] = false
+  opts.on( '-v', '--verbose', 'Output more information' ) do
+    Options[:verbose] = true
+  end
+
+  Options[:language] = "fr"
+  opts.on( '-l', '--language LANG', 'Change the search language' ) do |lang|
+    Options[:language] = lang
+  end
+
+  opts.on( '-h', '--help', 'Display this screen' ) do
+    puts opts
+    exit
+  end
+
+end
+
+
+puts optparse or exit if optparse.parse!.size == 0
+
+@ExecString = Bin + " " + Option + " " + Chrome + " " + BaseUrl
+@Search = ""
+
+
+ARGV.each do|a|
+  a.split(" ").each do |b|
+     @ExecString += b + "+"
+     @Search += " " + b
+  end
+end
+
+puts "Searching for \"" + @Search.strip! + "\"." if Options[:verbose]
+
+@ExecString = @ExecString.chomp('+')
+@ExecString += "&hl=" + Options[:language]
+
+exec(@ExecString)
