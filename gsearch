@@ -6,21 +6,32 @@
 #    By: mravenel <mravenel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/02/06 13:29:06 by mravenel          #+#    #+#              #
-#    Updated: 2015/02/06 14:49:32 by mravenel         ###   ########.fr        #
+#    Updated: 2015/02/06 15:26:26 by mravenel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
 require 'optparse'
+
+def buildQuery(str)
+  str.split(" ").each do |b|
+    @ExecString += b + "+"
+    @Search += " " + b
+  end
+end
 
 Chrome = "\"Google Chrome.app\""
 BaseUrl = "http://www.google.com/search?q="
 Option = "-a"
 Bin = "open"
 
+@ExecString = Bin + " " + Option + " " + Chrome + " " + BaseUrl
+
 Options = {}
 
 optparse = OptionParser.new do|opts|
+
   opts.banner = "Usage: gsearch [options] keyword1 keyword2 keyword3..."
+
   Options[:verbose] = false
   opts.on( '-v', '--verbose', 'Output more information' ) do
     Options[:verbose] = true
@@ -38,19 +49,19 @@ optparse = OptionParser.new do|opts|
 
 end
 
-
-puts optparse or exit if optparse.parse!.size == 0
-
-@ExecString = Bin + " " + Option + " " + Chrome + " " + BaseUrl
 @Search = ""
+@line   = ""
 
-
-ARGV.each do|a|
-  a.split(" ").each do |b|
-     @ExecString += b + "+"
-     @Search += " " + b
+if optparse.parse!.size == 0
+  @line  = $stdin.readline()
+  buildQuery(@line)
+else
+  ARGV.each do|a|
+    buildQuery(a)
   end
 end
+
+puts optparse or exit if @line.length == 1 and ARGV.size == 0
 
 puts "Searching for \"" + @Search.strip! + "\"." if Options[:verbose]
 
