@@ -6,7 +6,7 @@
 #    By: mravenel <mravenel@student.42.fr>          +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2015/02/06 13:29:06 by mravenel          #+#    #+#              #
-#    Updated: 2015/02/06 15:26:26 by mravenel         ###   ########.fr        #
+#    Updated: 2015/02/18 17:33:40 by mravenel         ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -37,6 +37,11 @@ optparse = OptionParser.new do|opts|
     Options[:verbose] = true
   end
 
+  Options[:cfeijoo] = false
+  opts.on( '-c', '--cfeijoo', 'Searching google like cfeijoo would' ) do
+    Options[:cfeijoo] = true
+  end
+
   Options[:language] = "fr"
   opts.on( '-l', '--language LANG', 'Change the search language' ) do |lang|
     Options[:language] = lang
@@ -61,7 +66,9 @@ else
   end
 end
 
+@ExecString += "in+javascript" if Options[:cfeijoo]
 puts optparse or exit if @line.length == 1 and ARGV.size == 0
+
 
 puts "Searching for \"" + @Search.strip! + "\"." if Options[:verbose]
 
